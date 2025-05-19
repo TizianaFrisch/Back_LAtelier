@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser } = require('../controllers/userController');
+const { registerUser, loginUser } = require('../controllers/userController');
 
 /**
  * @swagger
@@ -39,5 +39,33 @@ const { registerUser } = require('../controllers/userController');
  *         description: El usuario ya existe
  */
 router.post('/register', registerUser);
+
+/**
+ * @swagger
+ * /api/users/login:
+ *   post:
+ *     summary: Iniciar sesión de usuario
+ *     tags: [Usuarios]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Inicio de sesión exitoso
+ *       401:
+ *         description: Credenciales inválidas  
+ */
+router.post('/login', loginUser);
 
 module.exports = router;

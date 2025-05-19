@@ -33,6 +33,27 @@ const registerUser = async (req, res) => {
   }
 };
 
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await userService.findUserByEmail(email);
+  if (!user) {
+    return res.status(401).json({ message: 'Credenciales inválidas' });
+  } 
+  if (user.password !== password) {
+    return res.status(401).json({ message: 'Credenciales inválidas' });
+  }
+
+  res.json({
+    id: user._id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    token: generateToken(user._id)
+  });
+};
+
 module.exports = {
-  registerUser
+  registerUser,
+  loginUser
 };

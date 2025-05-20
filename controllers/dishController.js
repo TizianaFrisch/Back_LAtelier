@@ -12,6 +12,7 @@ const createDish = async (req, res) => {
 
 // Listar platos
 const getDishes = async (req, res) => {
+  console.log('entro aca')
   try {
     const filter = { isDeleted: false };
 

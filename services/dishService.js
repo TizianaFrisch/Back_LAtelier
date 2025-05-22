@@ -17,9 +17,14 @@ const deleteDish = async (id) => {
   return await Dish.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
 };
 
+const getDishById = async (id) => {
+  return await Dish.findById(id);
+};
+
 module.exports = {
   createDish,
   getDishes,
   updateDish,
-  deleteDish
+  deleteDish,
+  getDishById
 };

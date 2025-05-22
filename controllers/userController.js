@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const userService = require('../services/userService');
+const bcrypt = require('bcryptjs');
 
 // Función para generar el token
 const generateToken = (userId) => {
@@ -38,9 +39,11 @@ const loginUser = async (req, res) => {
 
   const user = await userService.findUserByEmail(email);
   if (!user) {
-    return res.status(401).json({ message: 'Credenciales inválidas' });
+    return res.status(401).json({ message: 'El usuario no existe' });
   } 
-  if (user.password !== password) {
+  
+  const passwordCorrect = await bcrypt.compare(password, user.password);
+  if (!passwordCorrect) {
     return res.status(401).json({ message: 'Credenciales inválidas' });
   }
 

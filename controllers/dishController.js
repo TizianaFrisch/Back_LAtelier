@@ -12,7 +12,6 @@ const createDish = async (req, res) => {
 
 // Listar platos
 const getDishes = async (req, res) => {
-  console.log('entro aca')
   try {
     const filter = { isDeleted: false };
 
@@ -24,6 +23,16 @@ const getDishes = async (req, res) => {
     res.status(200).json(dishes);
   } catch (error) {
     res.status(500).json({ message: 'Error al listar platos' });
+  }
+};
+
+// Obtener plato por ID
+const getDishById = async (req, res) => {
+  try {
+    const dish = await dishService.getDishById(req.params.id);
+    res.status(200).json(dish);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener el plato' });
   }
 };
 
@@ -53,5 +62,6 @@ module.exports = {
   createDish,
   getDishes,
   updateDish,
-  deleteDish
+  deleteDish,
+  getDishById
 };

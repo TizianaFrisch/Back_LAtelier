@@ -4,7 +4,8 @@ const {
   createDish,
   getDishes,
   updateDish,
-  deleteDish
+  deleteDish,
+  getDishById
 } = require('../controllers/dishController');
 
 /**
@@ -36,6 +37,8 @@ const {
  *         description: Lista de platos obtenida exitosamente
  */
 router.get('/', getDishes);
+
+router.get('/:id', getDishById);
 
 /**
  * @swagger

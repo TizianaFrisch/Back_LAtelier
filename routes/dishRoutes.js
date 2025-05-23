@@ -7,6 +7,7 @@ const {
   deleteDish,
   getDishById
 } = require('../controllers/dishController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 /**
  * @swagger
@@ -72,7 +73,7 @@ router.get('/:id', getDishById);
  *       201:
  *         description: Plato creado correctamente
  */
-router.post('/', createDish);
+router.post('/', authMiddleware, createDish);
 
 /**
  * @swagger
@@ -108,7 +109,7 @@ router.post('/', createDish);
  *       200:
  *         description: Plato actualizado
  */
-router.put('/:id', updateDish);
+router.put('/:id', authMiddleware, updateDish);
 
 /**
  * @swagger
@@ -127,6 +128,6 @@ router.put('/:id', updateDish);
  *       200:
  *         description: Plato eliminado lógicamente
  */
-router.delete('/:id', deleteDish);
+router.delete('/:id', authMiddleware, deleteDish);
 
 module.exports = router;

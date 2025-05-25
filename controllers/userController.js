@@ -80,8 +80,70 @@ const getProfile = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updates = { ...req.body };
+    delete updates.email;
+    delete updates.password;
+
+    const updatedUser = await userService.updateUser(id, updates);
+
+    if (!updatedUser || updatedUser.isDeleted) {
+      return res.status(404).json({ message: 'Usuario no encontrado o eliminado' });
+    }
+
+    res.json({
+      id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      updatedAt: updatedUser.updatedAt
+    });
+  } catch (error) {
+    console.error('Error al actualizar usuario:', error);
+    res.status(500).json({ message: 'Error al actualizar usuario' });
+  }
+};
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = await userService.deleteUser(id, req.user.id);
+
+    if (!deleted || deleted.isDeleted !== true) {
+      return res.status(404).json({ message: 'Usuario no encontrado o ya eliminado' });
+    }
+
+    res.json({ message: 'Usuario eliminado lógicamente' });
+  } catch (error) {
+    console.error('Error al eliminar usuario:', error);
+    res.status(500).json({ message: 'Error al eliminar usuario' });
+  }
+};
+
+const getUsers = async (req, res) => {
+  try {
+    const filters = {};
+    if (req.query.name) filters.name = { $regex: req.query.name, $options: 'i' };
+    if (req.query.role) filters.role = req.query.role;
+
+    const users = await userService.getUsers(filters);
+    res.json(users);
+  } catch (error) {
+    console.error('Error al listar usuarios:', error);
+    res.status(500).json({ message: 'Error al listar usuarios' });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
-  getProfile
+  getProfile,
+  updateUser,
+  deleteUser,   
+  getUsers      
 };
+
+

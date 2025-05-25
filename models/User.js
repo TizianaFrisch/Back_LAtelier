@@ -23,10 +23,18 @@ const userSchema = new mongoose.Schema({
   isDeleted: {
     type: Boolean,
     default: false
+  },
+  deletedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  deletedAt: {
+    type: Date
   }
 }, {
   timestamps: true
 });
+
 
 // Hashea la contraseña antes de guardar
 userSchema.pre('save', async function (next) {

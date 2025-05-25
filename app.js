@@ -1,13 +1,17 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const connectDB = require('./config/db');
+const { connectDB, createDefaultAdmin } = require('./config/db'); // <-- Agregás esto
 const cors = require('cors');
 
 const dishRoutes = require('./routes/dishRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 dotenv.config();
-connectDB();
+
+// Conectás a la DB y luego creás el admin
+connectDB().then(() => {
+  createDefaultAdmin(); // <-- Acá se crea si no existe
+});
 
 const app = express();
 
@@ -23,13 +27,12 @@ app.use(express.json());
 app.use('/api/dishes', dishRoutes);
 app.use('/api/users', userRoutes);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-
-  console.log(`Servidor corriendo en puerto http://localhost:${PORT}`);
-});
-
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./docs/swagger');
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto http://localhost:${PORT}`);
+});

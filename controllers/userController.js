@@ -2,14 +2,14 @@ const jwt = require('jsonwebtoken');
 const userService = require('../services/userService');
 const bcrypt = require('bcryptjs');
 
-// Función para generar el token
+
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: '7d'
   });
 };
 
-// 👉 Registro
+
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -37,25 +37,36 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await userService.findUserByEmail(email);
-  if (!user) {
-    return res.status(401).json({ message: 'El usuario no existe' });
-  } 
-  
-  const passwordCorrect = await bcrypt.compare(password, user.password);
-  if (!passwordCorrect) {
-    return res.status(401).json({ message: 'Credenciales inválidas' });
+  console.log("Login recibido:", email); 
+
+  try {
+    const user = await userService.findUserByEmail(email);
+
+    if (!user) {
+      console.log(" Usuario no encontrado"); 
+      return res.status(401).json({ message: 'El usuario no existe' });
+    }
+
+    const passwordCorrect = await bcrypt.compare(password, user.password);
+    if (!passwordCorrect) {
+      console.log(" Contraseña incorrecta"); 
+      return res.status(401).json({ message: 'Credenciales inválidas' });
+    }
+
+    console.log(" Login exitoso:", user.email); 
+
+    return res.json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id)
+    });
+  } catch (error) {
+    console.error(" Error inesperado en login:", error); 
+    return res.status(500).json({ message: 'Error interno al iniciar sesión' });
   }
-
-  res.json({
-    id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    token: generateToken(user._id)
-  });
 };
-
 
 const getProfile = async (req, res) => {
   try {
@@ -63,7 +74,7 @@ const getProfile = async (req, res) => {
     const user = await userService.findUserById(req.user.id);
     if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
     
-    // Devolver toda la información del usuario excepto la contraseña
+   
     const userInfo = {
       id: user._id,
       name: user.name,

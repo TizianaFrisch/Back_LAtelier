@@ -16,23 +16,25 @@ const createDefaultAdmin = async () => {
     const adminExists = await User.findOne({ role: 'admin' });
 
     if (!adminExists) {
-      await User.create({
+      const admin = new User({
         name: 'Admin',
         email: 'admin@example.com',
         password: 'LAtelier123',
         role: 'admin'
       });
 
+      await admin.save(); 
+
       console.log('🛠 Usuario admin por defecto creado: admin@example.com / LAtelier123');
     } else {
-      console.log('✅ Admin existente detectado');
+      console.log(' Admin existente detectado');
     }
   } catch (error) {
-    console.error('❌ Error creando admin por defecto:', error);
+    console.error('Error creando admin por defecto:', error);
   }
 };
 
 module.exports = {
   connectDB,
-  createDefaultAdmin // ⬅️ esto es lo que te faltaba exportar
+  createDefaultAdmin 
 };

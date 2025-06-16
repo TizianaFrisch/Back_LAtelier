@@ -31,11 +31,6 @@
    npm start
    ```
 
-## Datos del admin inicial
-
-- **Usuario:** admin@latelier.com
-- **Contraseña:** admin123
-
 > Puedes cambiar estos datos en la base de datos después del primer inicio.
 
 ## Dependencias necesarias

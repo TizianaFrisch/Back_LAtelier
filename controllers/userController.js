@@ -12,14 +12,14 @@ const generateToken = (userId) => {
 
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     const userExists = await userService.findUserByEmail(email);
     if (userExists) {
       return res.status(400).json({ message: 'El usuario ya existe' });
     }
 
-    const user = await userService.createUser({ name, email, password });
+    const user = await userService.createUser({ name, email, password, role });
 
     res.status(201).json({
       id: user._id,
@@ -148,13 +148,37 @@ const getUsers = async (req, res) => {
   }
 };
 
+const createUser = async (req, res) => {
+  try {
+    console.log("Crear usuario recibido:", req.body);
+    const user = await userService.createUser(req.body);
+    res.status(201).json(user);
+  } catch (error) {
+    console.error('Error al crear usuario:', error);
+    res.status(500).json({ message: 'Error al crear usuario' });  
+  }
+};
+
+const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userService.findUserById(id);
+    res.json(user);
+  } catch (error) {
+    console.error('Error al obtener usuario por ID:', error);
+    res.status(500).json({ message: 'Error al obtener usuario por ID' });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getProfile,
   updateUser,
   deleteUser,   
-  getUsers      
+  getUsers,
+  createUser,
+  getUserById
 };
 
 

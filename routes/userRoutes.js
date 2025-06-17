@@ -6,7 +6,9 @@ const {
   getProfile,
   updateUser,
   deleteUser,
-  getUsers
+  getUsers,
+  createUser,
+  getUserById
 } = require('../controllers/userController');
 const authMiddleware = require('../middleware/authMiddleware');
 
@@ -181,5 +183,45 @@ router.delete('/:id', authMiddleware, deleteUser);
  *         description: Error al obtener usuarios
  */
 router.get('/', authMiddleware, getUsers);
+
+/**
+ * @swagger
+ * /api/users:
+ *   post:
+ *     summary: Crear un nuevo usuario
+ *     tags: [Usuarios]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object 
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *               - role
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Usuario creado correctamente
+ *       400:
+ *         description: El usuario ya existe
+ *       500:
+ *         description: Error al crear usuario  
+ */
+router.post('/', authMiddleware, createUser);
+
+router.get('/:id', authMiddleware, getUserById);
 
 module.exports = router;

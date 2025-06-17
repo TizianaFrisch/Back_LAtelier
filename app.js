@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const { connectDB, createDefaultAdmin } = require('./config/db'); // <-- Agregás esto
+const { connectDB, createDefaultAdmin } = require('./config/db'); 
 const cors = require('cors');
 
 const dishRoutes = require('./routes/dishRoutes');
@@ -8,16 +8,14 @@ const userRoutes = require('./routes/userRoutes');
 
 dotenv.config();
 
-// Conectás a la DB y luego creás el admin
 connectDB().then(() => {
-  createDefaultAdmin(); // <-- Acá se crea si no existe
+  createDefaultAdmin(); 
 });
 
 const app = express();
 
-// Configuración de CORS
 app.use(cors({
-  origin: '*',
+  origin: ['https://latelier-system-front.vercel.app', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));

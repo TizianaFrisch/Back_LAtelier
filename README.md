@@ -68,3 +68,14 @@ Back_LAtelier/
 ```
 
 ---
+
+## Auditoría de acciones de usuario
+
+El sistema cuenta con una funcionalidad de auditoría que registra automáticamente las acciones relevantes realizadas por los usuarios (por ejemplo: creación, modificación o eliminación de platos, usuarios, etc.).
+
+- Cada vez que un usuario realiza una acción importante, se genera un registro de auditoría.
+- Los registros de auditoría incluyen información como: usuario, acción realizada, fecha y hora, y detalles adicionales.
+- Estos registros se almacenan en la base de datos (colección `audits` o similar).
+- Puedes consultar estos registros para monitorear la actividad del sistema y cumplir con requisitos de trazabilidad.
+
+---

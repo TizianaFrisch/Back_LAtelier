@@ -11,11 +11,20 @@ const dishSchema = new mongoose.Schema({
     required: true
   },
   category: {
-    type: String,
-    enum: ['entrada', 'principal', 'postre', 'bebida'],
-    required: true
+  type: String,
+  enum: ['entrada', 'principal', 'postre', 'bebida', 'ensalada', 'bebida_alcoholica'],
+  required: true
+},
+  subcategory: {
+    type: String // Ej: 'Carnes Rojas', 'Ensaladas', etc.
   },
-  image: String, // URL o path de imagen
+  ingredientes: {
+    type: String // Podés usar array si querés más adelante
+  },
+  alergenos: {
+    type: String // Ej: 'Gluten, lácteos'
+  },
+  image: String, // Path del archivo en /uploads
   isDeleted: {
     type: Boolean,
     default: false

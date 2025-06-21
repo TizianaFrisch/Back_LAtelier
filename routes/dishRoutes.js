@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const upload = require('../middleware/upload');
 const {
   createDish,
   getDishes,
@@ -39,6 +40,23 @@ const authMiddleware = require('../middleware/authMiddleware');
  */
 router.get('/', getDishes);
 
+/**
+ * @swagger
+ * /api/dishes/{id}:
+ *   get:
+ *     summary: Obtener un plato por ID
+ *     tags: [Platos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del plato
+ *     responses:
+ *       200:
+ *         description: Detalle del plato
+ */
 router.get('/:id', getDishById);
 
 /**
@@ -47,10 +65,12 @@ router.get('/:id', getDishById);
  *   post:
  *     summary: Crear un nuevo plato
  *     tags: [Platos]
+ *     consumes:
+ *       - multipart/form-data
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
@@ -69,11 +89,12 @@ router.get('/:id', getDishById);
  *                 enum: [entrada, principal, postre, bebida]
  *               image:
  *                 type: string
+ *                 format: binary
  *     responses:
  *       201:
  *         description: Plato creado correctamente
  */
-router.post('/', authMiddleware, createDish);
+router.post('/', authMiddleware, upload.single('image'), createDish);
 
 /**
  * @swagger
@@ -81,6 +102,8 @@ router.post('/', authMiddleware, createDish);
  *   put:
  *     summary: Actualizar un plato
  *     tags: [Platos]
+ *     consumes:
+ *       - multipart/form-data
  *     parameters:
  *       - in: path
  *         name: id
@@ -91,7 +114,7 @@ router.post('/', authMiddleware, createDish);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -105,11 +128,12 @@ router.post('/', authMiddleware, createDish);
  *                 type: string
  *               image:
  *                 type: string
+ *                 format: binary
  *     responses:
  *       200:
  *         description: Plato actualizado
  */
-router.put('/:id', authMiddleware, updateDish);
+router.put('/:id', authMiddleware, upload.single('image'), updateDish);
 
 /**
  * @swagger

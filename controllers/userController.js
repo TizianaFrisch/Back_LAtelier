@@ -1,14 +1,13 @@
 const jwt = require('jsonwebtoken');
 const userService = require('../services/userService');
 const bcrypt = require('bcryptjs');
-
+const { registerAudit } = require('../services/auditService');
 
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: '7d'
   });
 };
-
 
 const registerUser = async (req, res) => {
   try {
@@ -20,6 +19,13 @@ const registerUser = async (req, res) => {
     }
 
     const user = await userService.createUser({ name, email, password, role });
+
+    // Auditoría
+    await registerAudit({
+      user: user._id,
+      action: 'Registro de usuario',
+      details: { email: user.email, name: user.name }
+    });
 
     res.status(201).json({
       id: user._id,
@@ -55,6 +61,13 @@ const loginUser = async (req, res) => {
 
     console.log(" Login exitoso:", user.email); 
 
+    // Auditoría
+    await registerAudit({
+      user: user._id,
+      action: 'Login de usuario',
+      details: { email: user.email }
+    });
+
     return res.json({
       id: user._id,
       name: user.name,
@@ -73,8 +86,7 @@ const getProfile = async (req, res) => {
     console.log('User ID from token:', req.user.id);
     const user = await userService.findUserById(req.user.id);
     if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
-    
-   
+
     const userInfo = {
       id: user._id,
       name: user.name,
@@ -83,7 +95,7 @@ const getProfile = async (req, res) => {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
     };
-    
+
     res.json(userInfo);
   } catch (error) {
     console.error('Error en getProfile:', error);
@@ -105,6 +117,13 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado o eliminado' });
     }
 
+    // Auditoría
+    await registerAudit({
+      user: req.user ? req.user._id : null,
+      action: 'Actualizar usuario',
+      details: { updatedUserId: updatedUser._id, updates }
+    });
+
     res.json({
       id: updatedUser._id,
       name: updatedUser.name,
@@ -117,6 +136,7 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: 'Error al actualizar usuario' });
   }
 };
+
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -126,6 +146,13 @@ const deleteUser = async (req, res) => {
     if (!deleted || deleted.isDeleted !== true) {
       return res.status(404).json({ message: 'Usuario no encontrado o ya eliminado' });
     }
+
+    // Auditoría
+    await registerAudit({
+      user: req.user ? req.user._id : null,
+      action: 'Eliminar usuario',
+      details: { deletedUserId: deleted._id }
+    });
 
     res.json({ message: 'Usuario eliminado lógicamente' });
   } catch (error) {
@@ -152,6 +179,14 @@ const createUser = async (req, res) => {
   try {
     console.log("Crear usuario recibido:", req.body);
     const user = await userService.createUser(req.body);
+
+    // Auditoría
+    await registerAudit({
+      user: req.user ? req.user._id : null,
+      action: 'Crear usuario (admin)',
+      details: { createdUserId: user._id, email: user.email }
+    });
+
     res.status(201).json(user);
   } catch (error) {
     console.error('Error al crear usuario:', error);
@@ -178,7 +213,7 @@ module.exports = {
   deleteUser,   
   getUsers,
   createUser,
-  getUserById
+  getUserById // ✅ agregalo acá
 };
 
-
+  

@@ -73,8 +73,12 @@ const getDishById = async (req, res) => {
 const updateDish = async (req, res) => {
   try {
     const updates = { ...req.body };
+
+    // Si no se subió una nueva imagen y tampoco se pasó una imagen, no borrar la existente
     if (req.file) {
       updates.image = req.file.filename;
+    } else if (req.body.image) {
+      updates.image = req.body.image; // puede ser una URL o el filename anterior
     }
 
     const updated = await dishService.updateDish(req.params.id, updates);

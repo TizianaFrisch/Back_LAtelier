@@ -2,8 +2,10 @@ const express = require('express');
 const dotenv = require('dotenv');
 const { connectDB, createDefaultAdmin } = require('./config/db'); 
 const cors = require('cors');
-const path = require('path'); // <--- ¡AGREGADO!
+const path = require('path'); 
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./docs/swagger');
 const dishRoutes = require('./routes/dishRoutes');
 const userRoutes = require('./routes/userRoutes');
 const auditRoutes = require('./routes/auditRoutes');
@@ -31,9 +33,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/dishes', dishRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/audit', auditRoutes);
-
-const swaggerUi = require('swagger-ui-express');
-const swaggerSpec = require('./docs/swagger');
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

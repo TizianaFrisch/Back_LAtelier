@@ -11,17 +11,17 @@ const createDish = async (req, res) => {
       return res.status(400).json({ message: "Precio inválido" });
     }
 
-  const dish = await dishService.createDish({
-  name,
-  description,
-  price: parseFloat(price), // ¡acordate esto también!
-  category,
-  ingredientes,
-  alergenos,
-  subcategory,
-  image,
-  createdBy: req.user ? req.user._id : null // 👈 CAMBIO CLAVE
-});
+    const dish = await dishService.createDish({
+      name,
+      description,
+      price: parseFloat(price), 
+      category,
+      ingredientes,
+      alergenos,
+      subcategory,
+      image,
+      createdBy: req.user ? req.user._id : null 
+    });
 
 
     await registerAudit({
@@ -36,7 +36,7 @@ const createDish = async (req, res) => {
 
     res.status(201).json(dish);
   } catch (error) {
-    console.error("Error en createDish:", error); // 👈 agregalo para ver el stack
+    console.error("Error en createDish:", error); 
     res.status(500).json({ message: 'Error al crear el plato' });
   }
 };
@@ -74,11 +74,10 @@ const updateDish = async (req, res) => {
   try {
     const updates = { ...req.body };
 
-    // Si no se subió una nueva imagen y tampoco se pasó una imagen, no borrar la existente
     if (req.file) {
       updates.image = req.file.filename;
     } else if (req.body.image) {
-      updates.image = req.body.image; // puede ser una URL o el filename anterior
+      updates.image = req.body.image;
     }
 
     const updated = await dishService.updateDish(req.params.id, updates);

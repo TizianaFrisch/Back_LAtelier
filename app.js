@@ -19,7 +19,11 @@ connectDB().then(() => {
 const app = express();
 
 app.use(cors({
-  origin: ['https://latelier-system-front.vercel.app', 'http://localhost:5173'],
+  origin: [
+    'https://latelier-system-front.vercel.app', 
+    'http://localhost:5173', 
+    'https://l-atelier-gourmet.vercel.app'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));

@@ -48,9 +48,10 @@ const loginUser = async (req, res) => {
   try {
     const user = await userService.findUserByEmail(email);
 
-    if (!user) {
-      console.log(" Usuario no encontrado"); 
-      return res.status(401).json({ message: 'El usuario no existe' });
+
+    if (!user || user.isDeleted) {
+      console.log(" Usuario no encontrado o eliminado"); 
+      return res.status(401).json({ message: 'El usuario no existe o fue eliminado' });
     }
 
     const passwordCorrect = await bcrypt.compare(password, user.password);
@@ -106,10 +107,14 @@ const getProfile = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-
     const updates = { ...req.body };
-    delete updates.email;
-    delete updates.password;
+    delete updates.email; // Opcional: no permitir cambiar email
+
+    // Si se envía una nueva contraseña, hashearla
+    if (updates.password) {
+      const salt = await bcrypt.genSalt(10);
+      updates.password = await bcrypt.hash(updates.password, salt);
+    }
 
     const updatedUser = await userService.updateUser(id, updates);
 
@@ -117,11 +122,10 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado o eliminado' });
     }
 
-    // Auditoría
     await registerAudit({
       user: req.user ? req.user._id : null,
       action: 'Actualizar usuario',
-      details: { updatedUserId: updatedUser._id, updates }
+      details: { updatedUserId: updatedUser._id, updates: { ...updates, password: updates.password ? '***' : undefined } }
     });
 
     res.json({
@@ -147,7 +151,7 @@ const deleteUser = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado o ya eliminado' });
     }
 
-    // Auditoría
+ 
     await registerAudit({
       user: req.user ? req.user._id : null,
       action: 'Eliminar usuario',
@@ -198,6 +202,12 @@ const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await userService.findUserById(id);
+
+    
+    if (!user || user.isDeleted) {
+      return res.status(404).json({ message: 'Usuario no encontrado o eliminado' });
+    }
+
     res.json(user);
   } catch (error) {
     console.error('Error al obtener usuario por ID:', error);
@@ -213,7 +223,6 @@ module.exports = {
   deleteUser,   
   getUsers,
   createUser,
-  getUserById // ✅ agregalo acá
+  getUserById 
 };
 
-  

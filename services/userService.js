@@ -21,7 +21,7 @@ const deleteUser = async (id) => {
 };
 
 const getUsers = async (filters) => {
-  return await User.find({ ...filters, isDeleted: false }).select('-password');
+  return await User.find({ ...filters }).select('-password');
 };
 
 module.exports = {

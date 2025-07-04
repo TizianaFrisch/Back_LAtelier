@@ -14,7 +14,7 @@ const registerUser = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     const userExists = await userService.findUserByEmail(email);
-    if (userExists && !userExists.isDeleted) {
+    if (userExists) {
       return res.status(400).json({ message: 'El usuario ya existe' });
     }
 
@@ -48,7 +48,7 @@ const loginUser = async (req, res) => {
   try {
     const user = await userService.findUserByEmail(email);
 
-    if (!user || user.isDeleted) {
+    if (!user) {
       console.log(" Usuario no encontrado o eliminado"); 
       return res.status(401).json({ message: 'El usuario no existe o fue eliminado' });
     }
@@ -117,7 +117,7 @@ const updateUser = async (req, res) => {
 
     const updatedUser = await userService.updateUser(id, updates);
 
-    if (!updatedUser || updatedUser.isDeleted) {
+    if (!updatedUser) {
       return res.status(404).json({ message: 'Usuario no encontrado o eliminado' });
     }
 
@@ -201,9 +201,8 @@ const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await userService.findUserById(id);
-
     
-    if (!user || user.isDeleted) {
+    if (!user) {
       return res.status(404).json({ message: 'Usuario no encontrado o eliminado' });
     }
 

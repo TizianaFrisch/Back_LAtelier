@@ -16,15 +16,15 @@ const dishSchema = new mongoose.Schema({
   required: true
 },
   subcategory: {
-    type: String // Ej: 'Carnes Rojas', 'Ensaladas', etc.
+    type: String 
   },
   ingredientes: {
-    type: String // Podés usar array si querés más adelante
+    type: String 
   },
   alergenos: {
-    type: String // Ej: 'Gluten, lácteos'
+    type: String 
   },
-  image: String, // Path del archivo en /uploads
+  image: String,
   isDeleted: {
     type: Boolean,
     default: false

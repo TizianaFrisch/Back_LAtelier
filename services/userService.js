@@ -16,17 +16,10 @@ const updateUser = async (id, data) => {
   return await User.findByIdAndUpdate(id, data, { new: true });
 };
 
-const deleteUser = async (id, deletedById) => {
-  return await User.findByIdAndUpdate(
-    id,
-    {
-      isDeleted: true,
-      deletedBy: deletedById,
-      deletedAt: new Date()
-    },
-    { new: true }
-  );
+const deleteUser = async (id) => {
+  return await User.deleteOne({ _id: id });
 };
+
 const getUsers = async (filters) => {
   return await User.find({ ...filters, isDeleted: false }).select('-password');
 };
